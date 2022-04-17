@@ -1,6 +1,6 @@
 import { Model } from '../model';
-import { parse } from 'csv-parse';
-
+// import { parse } from 'csv-parse';
+import * as Papa from 'papaparse';
 
 
 export class Helper {
@@ -9,26 +9,37 @@ export class Helper {
       return;
     }
 
-    const _parser = parse({
-      delimiter: ',',
-      skip_empty_lines: true,
-      trim: true,
-    });
+    // const _parser = parse({
+    //   delimiter: ',',
+    //   skip_empty_lines: true,
+    //   trim: true,
+    // });
 
-    const tokens: any = [];
-    _parser.on('readable', function () {
-      let record;
-      while ((record = _parser.read()) !== null) {
-        tokens.push(record);
+    const result = Papa.parse<string>(line, {
+      delimiter: ',',
+      skipEmptyLines: true,
+      transform: (value: string, row) => {
+        return value.trim();
       }
     });
 
-    _parser.write(line);
-    _parser.end();
+    // const tokens: any = [];
+    // _parser.on('readable', function () {
+    //   let record;
+    //   while ((record = _parser.read()) !== null) {
+    //     tokens.push(record);
+    //   }
+    // });
+    // _parser.write(line);
+    // _parser.end();
 
+    const tokens: any = result.data;
     if (!tokens || !tokens[0]) {
       return;
     }
+
+    // console.log(tokens);
+    // console.log("1",result);
 
     const key = tokens[0][0];
     const sec = key.substring(0, 1);
