@@ -40,7 +40,7 @@ export class FunctionMap {
     fm.addFunction('keyMatch5', util.keyMatch5Func);
     fm.addFunction('regexMatch', util.regexMatchFunc);
     fm.addFunction('ipMatch', util.ipMatchFunc);
-    fm.addFunction('globMatch', util.globMatch);
+    // fm.addFunction('globMatch', util.globMatch);
 
     return fm;
   }

@@ -14,7 +14,7 @@
 
 import * as rbac from '../rbac';
 import { ip } from './ip';
-import * as picomatch from 'picomatch';
+// import * as picomatch from 'picomatch';
 
 // regexMatch determines whether key1 matches the pattern of key2 in regular expression.
 function regexMatch(key1: string, key2: string): boolean {
@@ -304,9 +304,9 @@ function ipMatchFunc(...args: any[]): boolean {
  * globMatch("abc.conf", "*.conf") => true
  * ```
  */
-function globMatch(string: string, pattern: string): boolean {
-  return picomatch(pattern)(string);
-}
+// function globMatch(string: string, pattern: string): boolean {
+//   return picomatch(pattern)(string);
+// }
 
 // generateGFunction is the factory method of the g(_, _) function.
 function generateGFunction(rm: rbac.RoleManager): any {
@@ -347,5 +347,5 @@ export {
   generateGFunction,
   keyMatch4Func,
   keyMatch5Func,
-  globMatch,
+  // globMatch,
 };

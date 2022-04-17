@@ -14,7 +14,7 @@
 
 import { ManagementEnforcer } from './managementEnforcer';
 import { Model, newModel } from './model';
-import { Adapter, FileAdapter, StringAdapter } from './persist';
+import { Adapter, StringAdapter } from './persist';
 import { getLogger } from './log';
 import { arrayRemoveDuplicates } from './util';
 
@@ -22,16 +22,6 @@ import { arrayRemoveDuplicates } from './util';
  * Enforcer = ManagementEnforcer + RBAC API.
  */
 export class Enforcer extends ManagementEnforcer {
-  /**
-   * initWithFile initializes an enforcer with a model file and a policy file.
-   * @param modelPath model file path
-   * @param policyPath policy file path
-   * @param lazyLoad lazyLoad whether to load policy at initial time
-   */
-  public async initWithFile(modelPath: string, policyPath: string, lazyLoad = false): Promise<void> {
-    const a = new FileAdapter(policyPath);
-    await this.initWithAdapter(modelPath, a, lazyLoad);
-  }
 
   /**
    * initWithFile initializes an enforcer with a model file and a policy file.
@@ -424,41 +414,45 @@ export class Enforcer extends ManagementEnforcer {
 
 export async function newEnforcerWithClass<T extends Enforcer>(enforcer: new () => T, ...params: any[]): Promise<T> {
   const e = new enforcer();
+  const m = newModel(params[0]);
+  const a = new StringAdapter(params[1]);
 
-  let parsedParamLen = 0;
-  if (params.length >= 1) {
-    const enableLog = params[params.length - 1];
-    if (typeof enableLog === 'boolean') {
-      getLogger().enableLog(enableLog);
-      parsedParamLen++;
-    }
-  }
+  await e.initWithModelAndAdapter(m, a, false);
 
-  if (params.length - parsedParamLen === 2) {
-    if (typeof params[0] === 'string') {
-      if (typeof params[1] === 'string') {
-        await e.initWithFile(params[0].toString(), params[1].toString());
-      } else {
-        await e.initWithAdapter(params[0].toString(), params[1]);
-      }
-    } else {
-      if (typeof params[1] === 'string') {
-        throw new Error('Invalid parameters for enforcer.');
-      } else {
-        await e.initWithModelAndAdapter(params[0], params[1]);
-      }
-    }
-  } else if (params.length - parsedParamLen === 1) {
-    if (typeof params[0] === 'string') {
-      await e.initWithFile(params[0], '');
-    } else {
-      await e.initWithModelAndAdapter(params[0]);
-    }
-  } else if (params.length === parsedParamLen) {
-    await e.initWithFile('', '');
-  } else {
-    throw new Error('Invalid parameters for enforcer.');
-  }
+  // let parsedParamLen = 0;
+  // if (params.length >= 1) {
+  //   const enableLog = params[params.length - 1];
+  //   if (typeof enableLog === 'boolean') {
+  //     getLogger().enableLog(enableLog);
+  //     parsedParamLen++;
+  //   }
+  // }
+
+  // if (params.length - parsedParamLen === 2) {
+  //   if (typeof params[0] === 'string') {
+  //     if (typeof params[1] === 'string') {
+  //       await e.initWithFile(params[0].toString(), params[1].toString());
+  //     } else {
+  //       await e.initWithAdapter(params[0].toString(), params[1]);
+  //     }
+  //   } else {
+  //     if (typeof params[1] === 'string') {
+  //       throw new Error('Invalid parameters for enforcer.');
+  //     } else {
+  //       await e.initWithModelAndAdapter(params[0], params[1]);
+  //     }
+  //   }
+  // } else if (params.length - parsedParamLen === 1) {
+  //   if (typeof params[0] === 'string') {
+  //     await e.initWithFile(params[0], '');
+  //   } else {
+  //     await e.initWithModelAndAdapter(params[0]);
+  //   }
+  // } else if (params.length === parsedParamLen) {
+  //   await e.initWithFile('', '');
+  // } else {
+  //   throw new Error('Invalid parameters for enforcer.');
+  // }
 
   return e;
 }
