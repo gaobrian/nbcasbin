@@ -292,6 +292,11 @@ function ipMatchFunc(...args: any[]): boolean {
   return ipMatch(ip1, ip2);
 }
 
+// dummy is the wrapper for dummyFunction.
+function dummyFunction(...args: any[]): boolean {
+  return false;
+}
+
 /**
  * Returns true if the specified `string` matches the given glob `pattern`.
  *
@@ -347,5 +352,6 @@ export {
   generateGFunction,
   keyMatch4Func,
   keyMatch5Func,
+  dummyFunction,
   // globMatch,
 };

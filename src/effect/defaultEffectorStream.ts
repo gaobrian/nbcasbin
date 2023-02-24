@@ -24,6 +24,7 @@ export class DefaultEffectorStream implements EffectorStream {
   private readonly expr: string;
 
   constructor(expr: string) {
+    expr = expr.replace(/\s/g, '');
     this.expr = expr;
   }
 
@@ -33,20 +34,20 @@ export class DefaultEffectorStream implements EffectorStream {
 
   public pushEffect(eft: Effect): [boolean, boolean] {
     switch (this.expr) {
-      case 'some(where (p_eft == allow))':
+      case 'some(where(p_eft==allow))':
         if (eft === Effect.Allow) {
           this.res = true;
           this.done = true;
         }
         break;
-      case '!some(where (p_eft == deny))':
+      case '!some(where(p_eft==deny))':
         this.res = true;
         if (eft === Effect.Deny) {
           this.res = false;
           this.done = true;
         }
         break;
-      case 'some(where (p_eft == allow)) && !some(where (p_eft == deny))':
+      case 'some(where(p_eft==allow))&&!some(where(p_eft==deny))':
         if (eft === Effect.Allow) {
           this.res = true;
         } else if (eft === Effect.Deny) {
@@ -54,7 +55,7 @@ export class DefaultEffectorStream implements EffectorStream {
           this.done = true;
         }
         break;
-      case 'priority(p_eft) || deny':
+      case 'priority(p_eft)||deny':
         if (eft !== Effect.Indeterminate) {
           this.res = eft === Effect.Allow;
           this.done = true;
